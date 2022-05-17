@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.guestbook.entity.User;
 import com.guestbook.repository.UserRepository;
 
+
 public class UserServiceImpl implements UserService {
 
 	@Autowired

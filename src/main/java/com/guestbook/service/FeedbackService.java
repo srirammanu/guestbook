@@ -12,7 +12,7 @@ public interface FeedbackService {
 
 	Feedback saveFeedback(Feedback feedback);
 
-	List<Feedback> getFeedbackList(User user);
+	List<Feedback> getFeedbackList(User user, boolean isRemovedAlso);
 
 	boolean approveFeedback(Feedback feedback);
 

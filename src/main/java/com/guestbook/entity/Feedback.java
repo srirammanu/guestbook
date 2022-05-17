@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table
-@NamedQuery(name = "Feedback.findFeedbackForUser", query = "select s from Feedback s where s.createBy = ?1")
+@NamedQuery(name = "Feedback.findFeedbackForUser", query = "select s from Feedback s where s.createBy = ?1 and s.isRemoved in (?2)")
 public class Feedback {
 
 	@Id
@@ -30,7 +30,6 @@ public class Feedback {
 	private boolean isFeedbackApproved;
 
 	@Column(nullable = false)
-	@ManyToOne()
 	private String createBy;
 
 	@Column(nullable = false)

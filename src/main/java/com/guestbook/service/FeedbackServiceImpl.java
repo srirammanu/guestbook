@@ -1,5 +1,6 @@
 package com.guestbook.service;
 
+
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ public class FeedbackServiceImpl implements FeedbackService{
 	}
 
 	@Override
-	public List<Feedback> getFeedbackList(User user) {
+	public List<Feedback> getFeedbackList(User user, boolean isRemovedAlso) {
 		logger.info("Fetch feedback for user :", user.getName());
 		return feedbackRepository.findFeedbackForUser(user.getName());
 	}
