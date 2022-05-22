@@ -1,13 +1,19 @@
 package com.guestbook.service;
 
-import java.util.Optional;
+import java.util.List;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.guestbook.entity.User;
+import com.guestbook.exception.InvalidCredentialException;
 import com.guestbook.repository.UserRepository;
 
-
+@Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
 	@Autowired
@@ -15,26 +21,28 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User saveUser(User user) {
-		return userRepository.save(user);
+		return userRepository.saveUser(user);
 	}
 
 	@Override
-	public boolean validateUser(String userName, String password) {
-		return false;
-	}
-
-	@Override
-	public User findUserById(Long userId) {
-		Optional<User> findById = userRepository.findById(userId);
-		if (findById.isPresent()) {
-			return findById.get();
+	public boolean validateUser(String email, String password) {
+		List<User> user =  userRepository.validateUser(email, password);
+		if (!CollectionUtils.isEmpty(user)) {
+			return true;
+		} else {
+			throw new InvalidCredentialException("User credentials are not valid");
 		}
-		return null;
 	}
 
 	@Override
-	public User findUserByName(String userName) {
-		return userRepository.findUserByName(userName);
+	public User findUserByEmail(String email) {
+		List<User> user = userRepository.findUserByEmail(email);
+
+		if (!CollectionUtils.isEmpty(user)) {
+			return user.get(0);
+		} else {
+			return null;
+		}
 	}
 
 }

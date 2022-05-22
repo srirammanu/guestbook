@@ -2,16 +2,20 @@ package com.guestbook.repository;
 
 import java.util.List;
 
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import com.guestbook.entity.Feedback;
+import com.guestbook.entity.User;
 
 @Repository
-public interface FeedbackRepository extends CrudRepository<Feedback, Long>{
+public interface FeedbackRepository {
 	
-	boolean approveFeedback(Feedback feedback);
+	List<Feedback> findFeedbackForUser(User user);
 	
-	List<Feedback> findFeedbackForUser(String userName);
+	List<Feedback> findAllFeedback();
+	
+	Feedback saveFeedback(Feedback feedback);
+	
+	boolean removeFeedback(Feedback feedback);
 	
 }

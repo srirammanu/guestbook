@@ -1,51 +1,98 @@
 package com.guestbook.service;
 
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.guestbook.constants.Roles;
 import com.guestbook.entity.Feedback;
 import com.guestbook.entity.User;
 import com.guestbook.repository.FeedbackRepository;
 
-public class FeedbackServiceImpl implements FeedbackService{
-	
+@Service
+public class FeedbackServiceImpl implements FeedbackService {
+
 	@Autowired
 	FeedbackRepository feedbackRepository;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(FeedbackServiceImpl.class);
 
 	@Override
-	public Feedback saveFeedback(Feedback feedback) {
-		logger.info("saving feedback for user :", feedback.getCreateBy());
-		return feedbackRepository.save(feedback);
+	public Feedback saveFeedback(Feedback feedback, MultipartFile image) {
+		logger.info("saving feedback for user :", feedback.getUserId());
+
+		String fileName = StringUtils.cleanPath(image.getOriginalFilename());
+		feedback.setFeedbackImg(fileName);
+		try {
+			feedback.setFileimage(image.getBytes());
+		} catch (IOException ie) {
+			logger.error("Error in converting image to byte array", ie);
+		}
+
+		feedbackRepository.saveFeedback(feedback);
+
+		String uploadDir = "user-photos/" + feedback.getUserId().getUserId();
+		saveFile(fileName, uploadDir, image);
+
+		return feedback;
+	}
+
+	private void saveFile(String fileName, String uploadDir, MultipartFile image) {
+		Path uploadPath = Paths.get(uploadDir);
+
+		if (!Files.exists(uploadPath)) {
+			try (InputStream inputStream = image.getInputStream()) {
+				Files.createDirectory(uploadPath);
+
+				Path filePath = uploadPath.resolve(fileName);
+				Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+
+			} catch (IOException e) {
+				logger.error("Error in saving image", e);
+			}
+		}
 	}
 
 	@Override
 	public List<Feedback> getFeedbackList(User user, boolean isRemovedAlso) {
 		logger.info("Fetch feedback for user :", user.getName());
-		return feedbackRepository.findFeedbackForUser(user.getName());
+		List<Feedback> feedbackList;
+		if (Roles.ADMIN.toString().equals(user.getRole())) {
+			feedbackList = feedbackRepository.findAllFeedback();
+		} else {
+			feedbackList = feedbackRepository.findFeedbackForUser(user);
+		}
+		return feedbackList;
 	}
 
 	@Override
 	public boolean approveFeedback(Feedback feedback) {
-		
-		return false;
+		feedback.setFeedbackApproved(true);
+		feedbackRepository.saveFeedback(feedback);
+		return true;
 	}
 
 	@Override
 	public boolean revmoeFeedback(Feedback feedback) {
-		feedbackRepository.delete(feedback);
+		feedbackRepository.removeFeedback(feedback);
 		return true;
 	}
 
 	@Override
 	public Feedback editFeedback(Feedback feedback) {
-		feedbackRepository.save(feedback);
-		return null;
+		feedbackRepository.saveFeedback(feedback);
+		return feedback;
 	}
 
 }

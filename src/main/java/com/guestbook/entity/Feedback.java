@@ -7,13 +7,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table
-@NamedQuery(name = "Feedback.findFeedbackForUser", query = "select s from Feedback s where s.createBy = ?1 and s.isRemoved in (?2)")
+@NamedQuery(name = "Feedback.findFeedbackForUser", query = "select s from Feedback s where s.userId = :userId")
+
 public class Feedback {
 
 	@Id
@@ -23,32 +26,37 @@ public class Feedback {
 	@Column(nullable = true)
 	private String feedbackTxt;
 
+	@Column( name = "fileimage" )
+	@Lob
+	private byte[] fileimage;
+	
 	@Column(nullable = true, length = 64)
 	private String feedbackImg;
 
 	@Column
 	private boolean isFeedbackApproved;
 
-	@Column(nullable = false)
-	private String createBy;
+	@ManyToOne
+	@JoinColumn(name = "userId")
+	private User userId;
 
 	@Column(nullable = false)
 	private Timestamp creteTs;
 
 	@Column
 	private boolean isRemoved;
-
+	
 	public Feedback() {
 
 	}
 
-	public Feedback(String feedbackTxt, String feedbackImg, boolean isFeedbackApproved, String createBy,
+	public Feedback(String feedbackTxt, String feedbackImg, boolean isFeedbackApproved, User userId,
 			Timestamp creteTs, boolean isRemoved) {
 		super();
 		this.feedbackTxt = feedbackTxt;
 		this.feedbackImg = feedbackImg;
 		this.isFeedbackApproved = isFeedbackApproved;
-		this.createBy = createBy;
+		this.setUserId(userId);
 		this.creteTs = creteTs;
 		this.isRemoved = isRemoved;
 	}
@@ -59,14 +67,6 @@ public class Feedback {
 
 	public void setFeedbackApproved(boolean isFeedbackApproved) {
 		this.isFeedbackApproved = isFeedbackApproved;
-	}
-
-	public String getCreateBy() {
-		return createBy;
-	}
-
-	public void setCreateBy(String createBy) {
-		this.createBy = createBy;
 	}
 
 	public Timestamp getCreteTs() {
@@ -101,11 +101,35 @@ public class Feedback {
 		this.feedbackImg = feedbackImg;
 	}
 
+	public User getUserId() {
+		return userId;
+	}
+
+	public void setUserId(User userId) {
+		this.userId = userId;
+	}
+
 	@Override
 	public String toString() {
 		return "Feedback [feedbackId=" + feedbackId + ", feedbackTxt=" + feedbackTxt + ", feedbackImg=" + feedbackImg
-				+ ", isFeedbackApproved=" + isFeedbackApproved + ", createBy=" + createBy + ", creteTs=" + creteTs
+				+ ", isFeedbackApproved=" + isFeedbackApproved + ", userId=" + getUserId() + ", creteTs=" + creteTs
 				+ ", isRemoved=" + isRemoved + "]";
+	}
+
+	public Long getFeedbackId() {
+		return feedbackId;
+	}
+
+	public void setFeedbackId(Long feedbackId) {
+		this.feedbackId = feedbackId;
+	}
+
+	public byte[] getFileimage() {
+		return fileimage;
+	}
+
+	public void setFileimage(byte[] fileimage) {
+		this.fileimage = fileimage;
 	}
 
 }

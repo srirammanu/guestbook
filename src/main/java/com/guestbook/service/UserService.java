@@ -11,8 +11,6 @@ public interface UserService {
 	
 	boolean validateUser(String userName, String password);
 	
-	User findUserById(Long id);
-	
-	User findUserByName(String userName);
+	User findUserByEmail(String email);
 	
 }

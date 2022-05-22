@@ -1,16 +1,19 @@
 package com.guestbook.entity;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedNativeQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table
-@NamedNativeQuery(name = "User.findUserByName", query = "select u from User u where u.name = ?")
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "emailId"))
+
 public class User {
 
 	@Id
@@ -18,22 +21,37 @@ public class User {
 	private Long userId;
 
 	@Column(nullable = false)
+	private String emailId;
+
+	@Column(nullable = false)
 	private String name;
 
 	@Column(nullable = false)
-	private Integer mobileNo;
+	private String mobileNo;
 
-	@Column
+	@Column(nullable = false)
+	private String password;
+
+	@Column(nullable = false)
 	private String role;
+
+	@OneToMany(mappedBy = "userId")
+	private List<Feedback> feedbackList;
 
 	public User() {
 
 	}
+	
+	public User(Long userId){
+		this.userId = userId;
+	}
 
-	public User(String name, Integer mobileNo, String role) {
+	public User(String emailId, String name, String mobileNo, String password, String role) {
 		super();
+		this.emailId = emailId;
 		this.name = name;
 		this.mobileNo = mobileNo;
+		this.password = password;
 		this.role = role;
 	}
 
@@ -45,11 +63,11 @@ public class User {
 		this.name = name;
 	}
 
-	public Integer getMobileNo() {
+	public String getMobileNo() {
 		return mobileNo;
 	}
 
-	public void setMobileNo(Integer mobileNo) {
+	public void setMobileNo(String mobileNo) {
 		this.mobileNo = mobileNo;
 	}
 
@@ -61,9 +79,34 @@ public class User {
 		this.role = role;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getEmailId() {
+		return emailId;
+	}
+
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
+
 	@Override
 	public String toString() {
-		return "User [userId=" + userId + ", name=" + name + ", mobileNo=" + mobileNo + ", role=" + role + "]";
+		return "User [userId=" + userId + ", emailId=" + emailId + ", name=" + name + ", mobileNo=" + mobileNo
+				+ ", password=" + password + ", role=" + role + "]";
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 }

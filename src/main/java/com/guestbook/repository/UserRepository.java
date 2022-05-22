@@ -1,13 +1,15 @@
 package com.guestbook.repository;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 import com.guestbook.entity.User;
 
-@Repository
-public interface UserRepository extends CrudRepository<User, Long> {
+public interface UserRepository {
 	
-	User findUserByName(String name);
+	List<User> findUserByEmail(String email);
+	
+	List<User> validateUser(String email, String password);
+	
+	User saveUser(User user);
 
 }
