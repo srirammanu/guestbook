@@ -26,7 +26,7 @@ public class Feedback {
 	@Column(nullable = true)
 	private String feedbackTxt;
 
-	@Column( name = "fileimage" )
+	@Column( name = "fileimage", nullable = true )
 	@Lob
 	private byte[] fileimage;
 	
@@ -57,6 +57,18 @@ public class Feedback {
 		this.feedbackImg = feedbackImg;
 		this.isFeedbackApproved = isFeedbackApproved;
 		this.setUserId(userId);
+		this.creteTs = creteTs;
+		this.isRemoved = isRemoved;
+	}
+
+	public Feedback(String feedbackTxt, byte[] fileimage, String feedbackImg, boolean isFeedbackApproved, User userId,
+			Timestamp creteTs, boolean isRemoved) {
+		super();
+		this.feedbackTxt = feedbackTxt;
+		this.fileimage = fileimage;
+		this.feedbackImg = feedbackImg;
+		this.isFeedbackApproved = isFeedbackApproved;
+		this.userId = userId;
 		this.creteTs = creteTs;
 		this.isRemoved = isRemoved;
 	}

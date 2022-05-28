@@ -42,6 +42,13 @@ public class FeedbackController {
 
 		return new ResponseEntity<>(savedFeedback, HttpStatus.CREATED);
 	}
+	
+	@PostMapping("/savefeedback")
+	public ResponseEntity<Feedback> saveFeedback(@RequestBody Feedback feedback) {
+		Feedback savedFeedback = feedbackService.saveFeedback(feedback, null);
+
+		return new ResponseEntity<>(savedFeedback, HttpStatus.CREATED);
+	}
 
 	/**
 	 * This API will be used to approve the feedback, Only admin can approve the
@@ -67,7 +74,7 @@ public class FeedbackController {
 	 */
 	@DeleteMapping("/delete")
 	public void deleteEntry(Feedback feedback) {
-		feedbackService.revmoeFeedback(feedback);
+		feedbackService.removeFeedback(feedback);
 	}
 
 }

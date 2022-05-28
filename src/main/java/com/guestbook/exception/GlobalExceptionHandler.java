@@ -2,10 +2,14 @@ package com.guestbook.exception;
 
 import java.time.LocalDateTime;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
@@ -27,5 +31,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		response.setMessage("Invalid Credentials");
 		ResponseEntity<Object> entity = new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
 		return entity;
+	}
+	
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public void handle(HttpMessageNotReadableException e) {
+	    logger.warn("Returning HTTP 400 Bad Request", e);
 	}
 }

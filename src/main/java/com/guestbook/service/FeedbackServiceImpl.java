@@ -32,18 +32,19 @@ public class FeedbackServiceImpl implements FeedbackService {
 	public Feedback saveFeedback(Feedback feedback, MultipartFile image) {
 		logger.info("saving feedback for user :", feedback.getUserId());
 
-		String fileName = StringUtils.cleanPath(image.getOriginalFilename());
-		feedback.setFeedbackImg(fileName);
-		try {
-			feedback.setFileimage(image.getBytes());
-		} catch (IOException ie) {
-			logger.error("Error in converting image to byte array", ie);
+		if (image != null) {
+			String fileName = StringUtils.cleanPath(image.getOriginalFilename());
+			feedback.setFeedbackImg(fileName);
+
+			String uploadDir = "user-photos/" + feedback.getUserId().getUserId();
+			saveFile(fileName, uploadDir, image);
+			try {
+				feedback.setFileimage(image.getBytes());
+			} catch (IOException ie) {
+				logger.error("Error in converting image to byte array", ie);
+			}
 		}
-
-		feedbackRepository.saveFeedback(feedback);
-
-		String uploadDir = "user-photos/" + feedback.getUserId().getUserId();
-		saveFile(fileName, uploadDir, image);
+		feedbackRepository.save(feedback);
 
 		return feedback;
 	}
@@ -78,21 +79,37 @@ public class FeedbackServiceImpl implements FeedbackService {
 
 	@Override
 	public boolean approveFeedback(Feedback feedback) {
-		feedback.setFeedbackApproved(true);
-		feedbackRepository.saveFeedback(feedback);
-		return true;
+		User user = feedback.getUserId();
+		if (Roles.ADMIN.toString().equals(user.getRole())) {
+			feedback.setFeedbackApproved(true);
+			feedbackRepository.save(feedback);
+			return true;
+		} else {
+			throw new RuntimeException("Only Admin User can approve the entry");
+		}
+
 	}
 
 	@Override
-	public boolean revmoeFeedback(Feedback feedback) {
-		feedbackRepository.removeFeedback(feedback);
-		return true;
+	public boolean removeFeedback(Feedback feedback) {
+		User user = feedback.getUserId();
+		if (Roles.ADMIN.toString().equals(user.getRole())) {
+			feedbackRepository.delete(feedback);
+			return true;
+		} else {
+			throw new RuntimeException("Only Admin User can delete the entry");
+		}
 	}
 
 	@Override
 	public Feedback editFeedback(Feedback feedback) {
-		feedbackRepository.saveFeedback(feedback);
-		return feedback;
+		User user = feedback.getUserId();
+		if (Roles.ADMIN.toString().equals(user.getRole())) {
+			feedbackRepository.save(feedback);
+			return feedback;
+		} else {
+			throw new RuntimeException("Only Admin User can update the entry");
+		}
 	}
 
 }

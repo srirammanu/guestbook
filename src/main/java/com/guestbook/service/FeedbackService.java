@@ -17,7 +17,7 @@ public interface FeedbackService {
 
 	boolean approveFeedback(Feedback feedback);
 
-	boolean revmoeFeedback(Feedback feedback);
+	boolean removeFeedback(Feedback feedback);
 
 	Feedback editFeedback(Feedback feedback);
 
