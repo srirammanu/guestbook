@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Sign Up - CodeJava</title>
+<link rel="stylesheet" type="text/css"	href="/webjars/bootstrap/css/bootstrap.min.css" />
+<script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+<script type="text/javascript"	src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div class="container text-center">
+		<div>
+			<h1>New Feedback Form</h1>
+		</div>
+
+		<form th:action="@{/savefeedback}" th:object="${feedback}"
+			method="post" style="max-width: 600px; margin: 0 auto;">
+			<div class="m-3">
+				<div class="form-group row">
+					<label class="col-4 col-form-label">Feedback Text: </label>
+					<div class="col-8">
+						<input type="text" th:field="*{feedbackTxt}" class="form-control" />
+					</div>
+				</div>
+
+				<div class="mb-3">
+					<label for="formFile" class="form-label">Feedback Image </label> <input
+						class="form-control" type="file" id="formFile">
+				</div>
+
+
+				<div>
+					<button type="submit" class="btn btn-primary">Save Entry</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</body>
+</html>

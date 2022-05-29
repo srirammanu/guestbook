@@ -11,10 +11,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("/resources/**").permitAll() 
+                .antMatchers("/resources/**",
+                        "/register_user**",
+                        "/process_register**",
+                        "/process_login**",
+                        "/new_feedback**",
+                        "/savefeedback**",
+                        "/approve**",
+                        "/delete**",
+                        "/js/**",
+                        "/css/**",
+                        "/img/**",
+                        "/webjars/**").permitAll() 
                 .anyRequest().authenticated()
                 .and()
-                .antMatcher("/user/**").antMatcher("/feedback/**")
             .formLogin()
                 .loginPage("/")
                 .permitAll()

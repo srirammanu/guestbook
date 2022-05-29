@@ -13,7 +13,7 @@
 			<h1>Guest Book Sign in</h1>
 		</div>
 		<form th:action="@{/process_login}" th:object="${loginForm}"
-					method="post" style="max-width: 600px; margin: 0 auto;">
+					method="get" style="max-width: 600px; margin: 0 auto;">
 		<div class="m-3">
 			<div class="form-group row">
 				<label class="col-4 col-form-label">E-mail: </label>
@@ -34,7 +34,7 @@
 			</div>
 			
 			<div>
-				<a th:href="@{/register_user}">Register new user</a>
+				<a th:href="@{/register_user}" >Register new user</a>
 			</div>
 		</div>
 		</form>

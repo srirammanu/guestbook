@@ -10,8 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.guestbook.entity.Feedback;
 import com.guestbook.entity.LoginForm;
@@ -21,7 +19,6 @@ import com.guestbook.service.FeedbackService;
 import com.guestbook.service.UserService;
 
 @Controller
-@RequestMapping("user")
 public class UserController {
 
 	@Autowired
@@ -36,7 +33,7 @@ public class UserController {
 	 * @param model
 	 * @return
 	 */
-	@PostMapping("/register_user")
+	@GetMapping("/register_user")
 	public String showRegistrationForm(Model model) {
 		model.addAttribute("user", new User());
 
@@ -51,7 +48,7 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/process_register")
-	public String processRegister(@RequestBody @Valid User user, BindingResult result) {
+	public String processRegister(@Valid User user, BindingResult result) {
 
 		User existUser = userService.findUserByEmail(user.getEmailId());
 
@@ -65,7 +62,7 @@ public class UserController {
 
 		userService.saveUser(user);
 
-		return "register_success";
+		return "login_form";
 	}
 
 	/**
@@ -79,7 +76,7 @@ public class UserController {
 	 * @return
 	 */
 	@GetMapping("/process_login")
-	public String login(@RequestBody @Valid LoginForm loginForm, Model model) {
+	public String login(@Valid LoginForm loginForm, Model model) {
 
 		User user = userService.findUserByEmail(loginForm.getEmailId());
 
@@ -90,9 +87,11 @@ public class UserController {
 		userService.validateUser(loginForm.getEmailId(), loginForm.getPassword());
 
 		List<Feedback> feedbackList = feedBackService.getFeedbackList(user, false);
+		
 		model.addAttribute("feedbackList", feedbackList);
+		model.addAttribute("userName", user.getName());
 
-		return "feedbackList";
+		return "feedback_List";
 
 	}
 

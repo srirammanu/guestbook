@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -44,6 +45,8 @@ public class FeedbackServiceImpl implements FeedbackService {
 				logger.error("Error in converting image to byte array", ie);
 			}
 		}
+		feedback.setCreteTs(new Timestamp(System.currentTimeMillis()));
+		
 		feedbackRepository.save(feedback);
 
 		return feedback;
