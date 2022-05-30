@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.guestbook.cache.DataProvider;
 import com.guestbook.entity.Feedback;
 import com.guestbook.entity.LoginForm;
 import com.guestbook.entity.User;
@@ -26,6 +27,9 @@ public class UserController {
 
 	@Autowired
 	FeedbackService feedBackService;
+	
+	@Autowired
+	DataProvider dataProvider;
 
 	/**
 	 * This API will open the registration form for the user
@@ -48,7 +52,7 @@ public class UserController {
 	 * @return
 	 */
 	@PostMapping("/process_register")
-	public String processRegister(@Valid User user, BindingResult result) {
+	public String processRegister(@Valid User user, BindingResult result, Model model) {
 
 		User existUser = userService.findUserByEmail(user.getEmailId());
 
@@ -61,6 +65,8 @@ public class UserController {
 		}
 
 		userService.saveUser(user);
+		
+		model.addAttribute("loginForm", new LoginForm());
 
 		return "login_form";
 	}
@@ -90,6 +96,8 @@ public class UserController {
 		
 		model.addAttribute("feedbackList", feedbackList);
 		model.addAttribute("userName", user.getName());
+		
+		dataProvider.setUser(user);
 
 		return "feedback_List";
 

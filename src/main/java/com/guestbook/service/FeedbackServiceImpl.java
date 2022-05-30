@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.guestbook.cache.DataProvider;
 import com.guestbook.constants.Roles;
 import com.guestbook.entity.Feedback;
 import com.guestbook.entity.User;
@@ -26,6 +27,9 @@ public class FeedbackServiceImpl implements FeedbackService {
 
 	@Autowired
 	FeedbackRepository feedbackRepository;
+	
+	@Autowired
+	DataProvider dataProvider;
 
 	private static final Logger logger = LoggerFactory.getLogger(FeedbackServiceImpl.class);
 
@@ -37,7 +41,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 			String fileName = StringUtils.cleanPath(image.getOriginalFilename());
 			feedback.setFeedbackImg(fileName);
 
-			String uploadDir = "user-photos/" + feedback.getUserId().getUserId();
+			String uploadDir = "feedback-photos/" + dataProvider.getUser().getName();
 			saveFile(fileName, uploadDir, image);
 			try {
 				feedback.setFileimage(image.getBytes());

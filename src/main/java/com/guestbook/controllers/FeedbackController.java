@@ -49,8 +49,8 @@ public class FeedbackController {
 	}
 
 	@PostMapping("/savefeedback")
-	public String saveFeedback(Feedback feedback) {
-		feedbackService.saveFeedback(feedback, null);
+	public String saveFeedback(Feedback feedback, @RequestParam("image") MultipartFile image) {
+		feedbackService.saveFeedback(feedback, image);
 
 		return "feedback_list";
 	}
