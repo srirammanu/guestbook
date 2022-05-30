@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,9 +29,11 @@ public class UserController {
 
 	@Autowired
 	FeedbackService feedBackService;
-	
+
 	@Autowired
 	DataProvider dataProvider;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
 	/**
 	 * This API will open the registration form for the user
@@ -39,6 +43,8 @@ public class UserController {
 	 */
 	@GetMapping("/register_user")
 	public String showRegistrationForm(Model model) {
+		
+		LOGGER.info("showRegistrationForm api of UserController");
 		model.addAttribute("user", new User());
 
 		return "registration_form";
@@ -48,11 +54,13 @@ public class UserController {
 	 * This API will be used to register the user. Once user will be registered
 	 * he/she will be redirected to the feedback form page
 	 * 
-	 * @param user n 
+	 * @param user
+	 *            
 	 * @return
 	 */
 	@PostMapping("/process_register")
 	public String processRegister(@Valid User user, BindingResult result, Model model) {
+		LOGGER.info("Registering the user with EmailId: ", user.getEmailId());
 
 		User existUser = userService.findUserByEmail(user.getEmailId());
 
@@ -65,7 +73,7 @@ public class UserController {
 		}
 
 		userService.saveUser(user);
-		
+		LOGGER.info("User saved successfully ");
 		model.addAttribute("loginForm", new LoginForm());
 
 		return "login_form";
@@ -84,19 +92,24 @@ public class UserController {
 	@GetMapping("/process_login")
 	public String login(@Valid LoginForm loginForm, Model model) {
 
+		LOGGER.info("Login the user with EmailId: ", loginForm.getEmailId());
+
 		User user = userService.findUserByEmail(loginForm.getEmailId());
 
 		if (user == null) {
+			LOGGER.info("User does not exists with emailId: ", loginForm.getEmailId());
 			throw new UserNotFoundException("User does not exist");
 		}
 
 		userService.validateUser(loginForm.getEmailId(), loginForm.getPassword());
 
 		List<Feedback> feedbackList = feedBackService.getFeedbackList(user, false);
-		
+
+		LOGGER.info("Feedback List {} of the user {} : ", feedbackList, user.getEmailId());
+
 		model.addAttribute("feedbackList", feedbackList);
 		model.addAttribute("userName", user.getName());
-		
+
 		dataProvider.setUser(user);
 
 		return "feedback_List";

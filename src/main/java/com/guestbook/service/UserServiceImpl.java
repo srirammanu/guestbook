@@ -12,6 +12,12 @@ import com.guestbook.entity.User;
 import com.guestbook.exception.InvalidCredentialException;
 import com.guestbook.repository.UserRepository;
 
+
+/**
+ * This service class provides the functionality for the user specific operations
+ * @author DELL
+ *
+ */
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
@@ -19,11 +25,17 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	UserRepository userRepository;
 
+	/**
+	 * Save the user
+	 */
 	@Override
 	public User saveUser(User user) {
 		return userRepository.save(user);
 	}
 
+	/**
+	 * Validate the user with provided user email and password
+	 */
 	@Override
 	public boolean validateUser(String email, String password) {
 		List<User> user =  userRepository.validateUser(email, password);
@@ -34,6 +46,9 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	/**
+	 * Find the user with the provided email
+	 */
 	@Override
 	public User findUserByEmail(String email) {
 		List<User> user = userRepository.findUserByEmail(email);
